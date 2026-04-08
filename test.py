@@ -1,7 +1,7 @@
 from dotenv import load_dotenv
 import os
-import google.generativeai as genai
+from google import genai
 
 load_dotenv()  # must be FIRST
 
-genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
+client = genai.Client(api_key=os.getenv("GOOGLE_API_KEY"))

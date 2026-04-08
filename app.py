@@ -1,18 +1,19 @@
 from dotenv import load_dotenv
 load_dotenv()
 import streamlit as st
-import google.generativeai as genai
+from google import genai
 import os
 import sqlite3
-import streamlit as st
 
-#configure the api key
-genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
+#Initialize the client with the API key
+client = genai.Client(api_key=os.getenv("GOOGLE_API_KEY"))
 
 #funvtion load the google model and generate response
 def get_gemini_response( question,prompt):
-    model=genai.GenerativeModel("gemini-2.5-flash")
-    response=model.generate_content([prompt[0],question])
+    response = client.models.generate_content(
+        model="gemini-2.5-flash",
+        contents=[prompt[0], question]
+    )
     return response.text
 
 #function to retrive query from the database
