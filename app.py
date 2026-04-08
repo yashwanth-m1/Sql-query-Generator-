@@ -91,18 +91,24 @@ st.write("**Columns:** `NAME` (VARCHAR), `CLASS` (VARCHAR), `SECTION` (VARCHAR),
 #user input
 user_question=st.text_input("Enter your question about the student database:")
 submit = st.button("Generate SQL Query")
-if submit :
+if submit:
     query=get_gemini_response(user_question,prompt)
     print("Generated SQL Query:", query)
     
-    st.subheader("Generated SQL Query:")
-    st.code(query, language="sql")
-    
-    data = read_sql_query(query, 'student.db')
-    st.subheader("Query Results:")
-    
-    for row in data:
-        print(row)
-        st.write(row)
+    if query.startswith("ERROR:"):
+        st.error(query)
+    else:
+        st.subheader("Generated SQL Query:")
+        st.code(query, language="sql")
+        
+        try:
+            data = read_sql_query(query, 'student.db')
+            st.subheader("Query Results:")
+            
+            for row in data:
+                print(row)
+                st.write(row)
+        except Exception as e:
+            st.error(f"Database Error: {e}")
 
     
