@@ -6,7 +6,7 @@ from app import prompt
 
 #set page configuration
 st.set_page_config(page_title="AI SQL Query Generator", page_icon=":robot_face:")
-st.image(r"C:\Users\yeshw\Pictures\Screenshots\1234.png", width=200)
+st.image("1234.png", width=200)
 st.markdown(" ai powered sql query Assitent ")
 
 #user input
