@@ -5,16 +5,24 @@ from google import genai
 import os
 import sqlite3
 
-#Initialize the client with the API key
-client = genai.Client(api_key=os.getenv("GOOGLE_API_KEY"))
-
 #funvtion load the google model and generate response
-def get_gemini_response( question,prompt):
-    response = client.models.generate_content(
-        model="gemini-2.5-flash",
-        contents=[prompt[0], question]
-    )
-    return response.text
+def get_gemini_response(question, prompt):
+    api_key = os.getenv("GOOGLE_API_KEY")
+    if not api_key:
+        try:
+            api_key = st.secrets["GOOGLE_API_KEY"]
+        except Exception:
+            return "ERROR: Secret GOOGLE_API_KEY is missing! Please add it in Streamlit Cloud Settings -> Secrets."
+            
+    try:
+        client = genai.Client(api_key=api_key)
+        response = client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=[prompt[0], question]
+        )
+        return response.text
+    except Exception as e:
+        return f"ERROR: Failed to generate response from Google AI: {e}"
 
 #function to retrive query from the database
 def read_sql_query(sql,db):
