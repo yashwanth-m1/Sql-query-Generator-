@@ -24,13 +24,18 @@ def get_gemini_response(question, prompt):
     except Exception as e:
         return f"ERROR: Failed to generate response from Google AI: {e}"
 
-#function to retrive query from the database
+#function to retrive query from the database securely
 def read_sql_query(sql,db):
-    conn=sqlite3.connect(db)
+    # Security Layer 2: Keyword Blocking
+    forbidden_words = ["DROP", "DELETE", "UPDATE", "INSERT", "ALTER", "TRUNCATE"]
+    if any(word in sql.upper() for word in forbidden_words):
+        raise Exception("Malicious query detected! Modifying the database is strictly forbidden.")
+
+    # Security Layer 1: Read-Only Database Connection
+    conn=sqlite3.connect(f"file:{db}?mode=ro", uri=True)
     cursor=conn.cursor()
     data=cursor.execute(sql)
     rows=data.fetchall()
-    conn.commit()
     conn.close()
     for row in rows:
         print(row)
@@ -46,6 +51,8 @@ SECTION (VARCHAR)
 MARKS (INT)
 
 Rules:
+
+SECURITY RULE: You are strictly forbidden from generating any query that modifies the database. NEVER use DROP, DELETE, UPDATE, INSERT, ALTER, or TRUNCATE. ONLY generate SELECT queries!
 
 Output only the SQL query and nothing else (no explanations, no comments, no extra text).
 
